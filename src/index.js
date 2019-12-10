@@ -1,16 +1,23 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+
+import reducer from "./reducer";
+
+import App from './App';
 
 import "./styles.css";
 
-function App() {
+const store = createStore(reducer);
+
+const ProvidedApp = () => {
   return (
-    <div className="App">
-      <h1>Hello CodeSandbox</h1>
-      <h2>Start editing to see some magic happen!</h2>
-    </div>
+    <Provider store={store}>
+      <App />
+    </Provider>
   );
 }
 
 const rootElement = document.getElementById("root");
-ReactDOM.render(<App />, rootElement);
+ReactDOM.render(<ProvidedApp />, rootElement);

@@ -23,6 +23,8 @@ export type Show = Movie & {
 
 export type MovieItem = Movie | Show;
 
-export type InitialState = {
-  movies: MovieItem[];
+export type State = {
+  movies: {
+    [key: string]: MovieItem
+  };
 };
