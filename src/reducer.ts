@@ -1,4 +1,4 @@
-import { State, MovieItem } from "./entities";
+import { State, Movie } from "./entities";
 import { UPVOTE_MOVIE, DOWNVOTE_MOVIE, MovieAction } from "./actions";
 import { pipe } from "fp-ts/lib/pipeable";
 import { movieFromId } from "./selector";
@@ -8,7 +8,7 @@ const initialState = {
 };
 
 const handleUpvotes = (
-  movieId: MovieItem['id'],
+  movieId: Movie['id'],
   modifierFunction: (upvotes: number) => number) =>
   (state: State) => {
     const movie = pipe(

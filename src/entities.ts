@@ -12,19 +12,8 @@ export type Movie = {
   upvotes: number;
 };
 
-export type Episode = {
-  title: string;
-  number: number;
-};
-
-export type Show = Movie & {
-  episodes: Episode[];
-};
-
-export type MovieItem = Movie | Show;
-
 export type State = {
   movies: {
-    [key: string]: MovieItem
+    [key: string]: Movie
   };
 };
