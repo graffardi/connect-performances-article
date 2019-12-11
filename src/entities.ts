@@ -16,4 +16,7 @@ export type State = {
   movies: {
     [key: string]: Movie
   };
+  actors: {
+    [key: string]: Actor
+  }
 };

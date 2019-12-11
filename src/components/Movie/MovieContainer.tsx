@@ -1,38 +1,63 @@
 import { connect } from 'react-redux';
 
-import { State, Movie as MovieType } from '../../entities';
+import { pipe } from 'fp-ts/lib/pipeable';
+import { fromOption, mapLeft, map as mapRight } from 'fp-ts/lib/Either';
+import { Option, fromNullable, map as mapOption } from 'fp-ts/lib/Option';
 
+import { State, Movie as MovieType, Actor } from '../../entities';
+import { movieFromId, actorsFromMovieId } from '../../selector';
 import { upvoteMovie, downvoteMovie } from '../../actions';
 
-import eitherComponent from '../eitherComponent';
+import eitherComponent, { EitherComponentProps } from '../eitherComponent';
 
 import Movie from './Movie';
+
+// Types
 
 type ExternalProps = {
   movieId: MovieType['id'];
 };
 
-type StateProps = {
+type StateProps = Option<{
   movie: MovieType;
-};
+  actors: Actor[];
+}>;
 
 type DispatchProps = {
-  upvoteMovie: () => void;
-  downvoteMovie: () => void;
+  upvoteMovie: (movieId: MovieType['id']) => void;
+  downvoteMovie: (movieId: MovieType['id']) => void;
 };
+
+// EitherComponent - Setup
 
 const FallbackComponent = () => null;
 const EitherMovie = eitherComponent(FallbackComponent, Movie);
 
+type MergedProps = EitherComponentProps<
+  typeof FallbackComponent,
+  typeof Movie
+>;
+
+// Connect
+
 const mapStateToProps = (
   state: State,
   { movieId }: ExternalProps
-) => {
-  // Faire  descendre une movie, ownprops movieId et encapsuler actions dans mergeProps\
-  // movieId peut-être faux donc on return une option dans le selecteur OU
-  // fromNullable ici pour reproduire le cas habituel
-  // Si présent aller get les actors, peut-être faux également
-};
+): StateProps =>
+  pipe(
+    state,
+    movieFromId(movieId),
+    fromNullable,
+    mapOption(movie =>
+      ({
+        movie,
+        actors: pipe(
+          state,
+          actorsFromMovieId(movie.id)
+        )
+      })
+    )
+  );
 
 const mapDispatchToProps = {
   upvoteMovie,
@@ -40,13 +65,41 @@ const mapDispatchToProps = {
 };
 
 const mergeProps = (
-  state: State,
+  maybeStateProps: StateProps,
   { upvoteMovie, downvoteMovie }: DispatchProps,
   { movieId }: ExternalProps
-) => {
+): MergedProps => {
+  const eitherProps = pipe(
+    maybeStateProps,
+    fromOption(
+      () => new Error('Unknow movieId'),
+    ),
+    mapLeft(error => {
+      console.error(error);
+    }),
+    mapRight(stateProps => {
+      const { movie, actors } = stateProps;
 
+      return {
+        movie,
+        actors,
+        upvoteMovie: () => {
+          upvoteMovie(movieId);
+        },
+        downvoteMovie: () => {
+          downvoteMovie(movieId);
+        }
+      };
+    })
+  );
+
+  return { eitherProps };
 }
 
-const ConnectedEitherMovie = connect(mapStateToProps, mapDispatchToProps, mergeProps)(EitherMovie);
+const ConnectedEitherMovie = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(EitherMovie);
 
 export default ConnectedEitherMovie;

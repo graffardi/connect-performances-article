@@ -1,10 +1,14 @@
+import { pipe } from "fp-ts/lib/pipeable";
+
+import { movieFromId } from "./selector";
 import { State, Movie } from "./entities";
 import { UPVOTE_MOVIE, DOWNVOTE_MOVIE, MovieAction } from "./actions";
-import { pipe } from "fp-ts/lib/pipeable";
-import { movieFromId } from "./selector";
 
 const initialState = {
-  movies: {}
+  movies: {
+    
+  },
+  actors: {},
 };
 
 const handleUpvotes = (
@@ -18,6 +22,7 @@ const handleUpvotes = (
 
     if (movie) {
       return {
+        ...state,
         movies: {
           ...state.movies,
           [movieId]: {
@@ -43,7 +48,7 @@ const initialReducer = (
 
       return pipe(
         state,
-        handleUpvotes(movieId, (upvotes) => upvotes + 1)
+        handleUpvotes(movieId, upvotes => upvotes + 1)
       );
     }
 
@@ -54,7 +59,7 @@ const initialReducer = (
 
       return pipe(
         state,
-        handleUpvotes(movieId, (upvotes) => upvotes - 1)
+        handleUpvotes(movieId, upvotes => upvotes - 1)
       );
     }
 
