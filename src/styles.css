@@ -5,3 +5,50 @@
   align-items: center;
   justify-content: center;
 }
+
+.currentMovie {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  height: 20rem;
+  width: 20rem;
+
+  padding: 1rem;
+
+  border: 1px solid lightcoral;
+  background-color: pink;
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.movie {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  height: 12rem;
+  width: 12rem;
+
+  margin: auto;
+}
+
+.movieTitle {
+  text-align: center;
+}
+
+.actors {
+  text-align: center;
+
+  margin: 1rem;
+  padding: 1rem;
+
+  border: 1px solid lightcoral;
+}
+
+.actorName {
+  margin: 1rem 0;
+}

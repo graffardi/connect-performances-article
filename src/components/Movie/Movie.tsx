@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Actor, Movie as MovieType } from "../../entities";
 
+import Actors from '../Actors/Actors';
+
 type Props = {
   movie: MovieType,
   actors: Actor[],
@@ -16,10 +18,16 @@ const Movie = ({
   downvoteMovie,
 }: Props) => (
   <div className="movie">
-    {movie}
-    {actors}
-    {upvoteMovie}
-    {downvoteMovie}
+    <h4 className="movieTitle">
+      {`${movie.title} - ${movie.upvotes}`}
+    </h4>
+
+    <div className="buttonsContainer">
+        <button onClick={upvoteMovie}>Good</button>
+        <button onClick={downvoteMovie}>Bad</button>
+    </div>
+
+    <Actors actors={actors} />
   </div>
 );
 
