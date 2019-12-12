@@ -16,31 +16,24 @@ export const movieFromId = (movieId: Movie['id']) =>
 
 export const actors = (state: State): State['actors'] => state.actors;
 
-export const actorFromId = (actorId: Actor['id']) =>
-    createSelector(
-      actors,
-      actors => actors[actorId]
-    );
-
 const isActor = (t: Actor | undefined): t is Actor => !(t === undefined);
 
 export const actorsFromMovieId = (movieId: Movie['id']) =>
-      createSelector(
-        state => state,
-        movieFromId(movieId),
-        (state, movie) => pipe(
-          movie,
-          fromNullable,
-          mapOption(
-            movie => pipe(
+  createSelector(
+    [movieFromId(movieId), actors],
+    (movie, actors) =>
+      pipe(
+        movie,
+        fromNullable,
+        mapOption(
+          movie =>
+            pipe(
               movie.actors,
               map(
-                actorId => pipe(
-                  state,
-                  actorFromId(actorId)
-                )),
-                filter(isActor)
-              )
+                actorId => actors[actorId]
+              ),
+              filter(isActor)
             )
-          )
-      );
+        )
+      )
+  );

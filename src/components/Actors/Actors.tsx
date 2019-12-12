@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
-import { pipe } from 'fp-ts/lib/pipeable';
-import { Option, fold } from 'fp-ts/lib/Option';
-
 import { Actor } from '../../entities';
 
 type Props = {
-  actors: Option<Actor[]>;
+  actors: Actor[];
 };
 
 const Actors = ({ actors }: Props) => {
@@ -17,13 +14,9 @@ const Actors = ({ actors }: Props) => {
   }, [actors])
 
   const isFirst = index === 0;
-  const isLast = (length: number) => index === length - 1;
+  const isLast = index === actors.length - 1;
 
-  return pipe(
-    actors,
-    fold(
-      () => null,
-      actors => (
+  return (
         <div className="actors">
           {actors[index] && <p className="actorName">
             {`${actors[index].firstName} ${actors[index].lastName}`}
@@ -41,7 +34,7 @@ const Actors = ({ actors }: Props) => {
             </div>
 
             <div>
-              {!isLast(actors.length) && 
+              {!isLast && 
                 <button
                   onClick={() => setCurrentIndex(index + 1)}
                 >
@@ -52,9 +45,7 @@ const Actors = ({ actors }: Props) => {
 
           </div>
         </div>
-      )
-    )
-  );
+      );
 };
 
 export default Actors;
