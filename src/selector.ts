@@ -1,5 +1,6 @@
 import { pipe } from 'fp-ts/lib/pipeable';
 import { map, filter } from 'fp-ts/lib/Array';
+import { fromNullable, Option, map as mapOption } from 'fp-ts/lib/Option';
 
 import { Movie, State, Actor } from "./entities";
 
@@ -26,15 +27,22 @@ export const actorFromId = (actorId: Actor['id']) =>
 const isActor = (t: Actor | undefined): t is Actor => !(t === undefined);
 
 export const actorsFromMovieId = (movieId: Movie['id']) =>
-  (state: State): Actor[] =>
+  (state: State): Option<Actor[]> =>
     pipe(
       state,
       movies,
       moviesList => moviesList[movieId],
-      movie => movie.actors,
-      map((actorId => pipe(
-        state,
-        actorFromId(actorId)
-      ))),
-      filter(isActor),
+      fromNullable,
+      mapOption(
+        movie => pipe(
+          movie.actors,
+          map(
+            actorId => pipe(
+              state,
+              actorFromId(actorId)
+            )
+          ),
+          filter(isActor),
+        )
+      )
     );

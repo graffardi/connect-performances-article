@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
+import { pipe } from 'fp-ts/lib/pipeable';
+import { Option, fold } from 'fp-ts/lib/Option';
+
 import { Actor } from '../../entities';
 
-type ActorButton = "previous" | "next";
-
 type Props = {
-  actors: Actor[];
+  actors: Option<Actor[]>;
 };
 
 const Actors = ({ actors }: Props) => {
@@ -15,40 +16,44 @@ const Actors = ({ actors }: Props) => {
     setCurrentIndex(0);
   }, [actors])
 
-  const handleClick = (buttonType: ActorButton) => {
-    switch (buttonType) {
-      case 'next': {
-        if ((index + 1) < actors.length) {
-          setCurrentIndex(index + 1);
-        }
+  const isFirst = index === 0;
+  const isLast = (length: number) => index === length - 1;
 
-        break;
-      }
+  return pipe(
+    actors,
+    fold(
+      () => null,
+      actors => (
+        <div className="actors">
+          {actors[index] && <p className="actorName">
+            {`${actors[index].firstName} ${actors[index].lastName}`}
+          </p>}
 
-      case 'previous': {
-        if (index > 0) {
-          setCurrentIndex(index - 1);
-        }
+          <div className="buttonsContainer">
+            <div>
+              {!isFirst &&
+                <button
+                  onClick={() => setCurrentIndex(index - 1)}
+                >
+                  Previous
+                </button>
+              }
+            </div>
 
-        break;
-      }
+            <div>
+              {!isLast(actors.length) && 
+                <button
+                  onClick={() => setCurrentIndex(index + 1)}
+                >
+                  Next
+                </button>
+              }
+            </div>
 
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <div className="actors">
-      {actors[index] && <p className="actorName">
-        {`${actors[index].firstName} ${actors[index].lastName}`}
-      </p>}
-
-      <div className="buttonsContainer">
-      <button onClick={() => handleClick('previous')}>Previous</button>
-        <button onClick={() => handleClick('next')}>Next</button>
-      </div>
-    </div>
+          </div>
+        </div>
+      )
+    )
   );
 };
 

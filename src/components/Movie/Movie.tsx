@@ -1,12 +1,14 @@
 import React from 'react';
 
+import { Option } from 'fp-ts/lib/Option';
+
 import { Actor, Movie as MovieType } from "../../entities";
 
 import Actors from '../Actors/Actors';
 
 type Props = {
   movie: MovieType,
-  actors: Actor[],
+  actors: Option<Actor[]>,
   upvoteMovie: () => void;
   downvoteMovie: () => void;
 };

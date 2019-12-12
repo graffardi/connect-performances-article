@@ -20,7 +20,7 @@ type ExternalProps = {
 
 type StateProps = Option<{
   movie: MovieType;
-  actors: Actor[];
+  actors: Option<Actor[]>;
 }>;
 
 type DispatchProps = {
