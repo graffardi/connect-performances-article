@@ -58,8 +58,8 @@ const initialState = {
     },
     666: {
       id: '666',
-      firstName: 'Satan',
-      lastName: '',
+      firstName: 'Baby',
+      lastName: 'Yoda',
     },
     23: {
       id: '23',
