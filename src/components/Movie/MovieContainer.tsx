@@ -1,10 +1,10 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import { pipe } from 'fp-ts/lib/pipeable';
 import { sequenceS } from 'fp-ts/lib/Apply';
-import { fromNullable, fold, option } from 'fp-ts/lib/Option';
+import { fromNullable, fold, option, getEq } from 'fp-ts/lib/Option';
 
 import { State, Movie as MovieType, Actor } from '../../entities';
 import { movieFromId, actorsFromMovieId } from '../../selector';
@@ -27,6 +27,10 @@ type DispatchProps = {
   upvoteMovie: () => void;
   downvoteMovie: () => void;
 };
+
+const E = getEq(
+  { equals: shallowEqual },
+);
 
 const createMovieActions = (
   movieId: MovieType['id'],
@@ -57,7 +61,7 @@ const movieWithActors = (movieId: MovieType['id']) => (state: State) => {
 const EitherMovie = ({ movieId }: ExternalProps) => {
   const dispatch = useDispatch();
 
-  const maybeMovieWithActors = useSelector(movieWithActors(movieId));
+  const maybeMovieWithActors = useSelector(movieWithActors(movieId), E.equals);
 
   const {
     upvoteMovie,
